@@ -126,9 +126,41 @@ def draw_bohrprotokoll(c: canvas.Canvas, data: dict):
 
     # ── Zeile: Bohrrichtung ──────────────────────────────────────────────────
     box(margin_l, 50, 190, 7)
-    text("Bohrrichtung: vertikal / horizontal / schräg", 11, 55.5, size=8)
-    text("Winkel horizontal: ......................................", 90, 55.5, size=8)
-    text("Winkel Nordrichtung im Uhr.: .................", 145, 55.5, size=8)
+    text("Bohrrichtung:", 11, 55.5, size=8)
+
+    # Drei Optionen mit Umzirkelung der gewählten
+    bohrrichtung = data.get("bohrrichtung", "").strip().lower()
+
+    # Positionen der drei Begriffe (x_mm, Text, key)
+    optionen = [
+        (36,  "vertikal",   "vertikal"),
+        (58,  "horizontal", "horizontal"),
+        (84,  "schräg",     "schraeg"),
+    ]
+
+    for x_opt, label, key in optionen:
+        c.setFont("Helvetica", 8)
+        x_px, y_px = pt(x_opt, 55.5)
+        c.drawString(x_px, y_px, label)
+
+        # Trennstrich " / " nach den ersten zwei Optionen
+        if key != "schraeg":
+            slash_x = x_opt + c.stringWidth(label, "Helvetica", 8) / mm + 1.5
+            text("/", slash_x, 55.5, size=8)
+
+        # Kreis zeichnen wenn diese Option gewählt ist
+        if bohrrichtung == key or bohrrichtung == label:
+            text_w = c.stringWidth(label, "Helvetica", 8) / mm
+            cx = (x_opt + text_w / 2) * mm
+            cy = H - 53.5 * mm          # vertikal zentriert auf den Text
+            rx = (text_w / 2 + 1.5) * mm
+            ry = 3.2 * mm
+            c.setLineWidth(0.8)
+            c.ellipse(cx - rx, cy - ry, cx + rx, cy + ry, fill=0)
+            c.setLineWidth(0.5)
+
+    text("Winkel horizontal: ......................................", 100, 55.5, size=8)
+    text("Winkel Nordrichtung im Uhr.: .................", 150, 55.5, size=8)
 
     # ── Block: Wasserspiegel / Verrohrung / Arbeitszeit ──────────────────────
     box(margin_l, 57, 60, 20)   # Wasserspiegel
@@ -294,6 +326,9 @@ beispiel_daten = {
     "bohrung_nr":           "",
     "bericht_nr":           "5431",
     "datum":                "30.03 - 8.04.2026",
+
+    # Bohrrichtung: "vertikal", "horizontal" oder "schraeg"
+    "bohrrichtung":         "vertikal",
 
     # Technische Parameter
     "wasserspiegel_1":      "10m",
