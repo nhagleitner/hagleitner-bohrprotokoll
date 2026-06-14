@@ -56,8 +56,8 @@ def generate_pdf():
     if not data:
         return jsonify({"error": "Kein gültiger JSON-Body"}), 400
 
-    if data.get("api_key") != API_KEY:
-        return jsonify({"error": "Ungültiger API-Key"}), 401
+    # if data.get("api_key") != API_KEY:
+    #     return jsonify({"error": "Ungültiger API-Key"}), 401
 
     # ── Pflichtfeld prüfen ────────────────────────────────────────────────────
     if not data.get("bericht_nr"):
